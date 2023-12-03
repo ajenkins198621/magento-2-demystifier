@@ -1,6 +1,6 @@
 # magento-2-demystifier README
 
-This is the README for your extension "magento-2-demystifier". After writing up a brief description, we recommend including the following sections.
+Helps you to demystify Magento 2 by providing a quick way to identify what type of file you're working on, and where it's located in the Magento 2 directory structure.
 
 ## Features
 
@@ -37,7 +37,7 @@ Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
+Initial release of the package... Still in development.
 
 ### 1.0.1
 

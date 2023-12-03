@@ -9,13 +9,16 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:extension.detectFileType"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "magento-2-demystifier.helloWorld",
-        "title": "Hello World"
+        "command": "magento-2-demystifier.demystify-magento",
+        "title": "Demystify Magento"
       }
     ]
   },
