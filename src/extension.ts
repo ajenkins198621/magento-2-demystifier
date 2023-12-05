@@ -16,20 +16,23 @@ type PathInfo = {
 	description: string; // Description of the directory
 };
 
+const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+myStatusBarItem.command = 'extension.show-detailed-file-info';
+
 export function activate(context: vscode.ExtensionContext) {
-	const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+
 	context.subscriptions.push(myStatusBarItem);
 
 	// Update status bar item based on active text editor
 	vscode.window.onDidChangeActiveTextEditor(() => {
-		updateStatusBarItem(myStatusBarItem);
+		updateStatusBarItem(myStatusBarItem, context);
 	});
 
 	// Initial update
-	updateStatusBarItem(myStatusBarItem);
+	updateStatusBarItem(myStatusBarItem, context);
 }
 
-function updateStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
+function updateStatusBarItem(statusBarItem: vscode.StatusBarItem, context: any): void {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
 		const filePath = editor.document.uri.fsPath;
@@ -46,11 +49,33 @@ function updateStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
 		// statusBarItem.text = `${icon} Magento Type: ${fileType.name}`;
 
 
-		if(fileInfo.pathSteps.length > 0) {
+
+		if (fileInfo.pathSteps.length > 0) {
 			statusBarItem.text = `${fileInfo.pathSteps[fileInfo.pathSteps.length - 1].title}`;
 		}
+		context.subscriptions.push(vscode.commands.registerCommand('extension.show-detailed-file-info', () => {
+			// Create or show the webview panel
+			const panel = vscode.window.createWebviewPanel(
+			  'moreInformation', // Identifies the panel
+			  'More Information', // Title displayed in the UI
+			  vscode.ViewColumn.One, // Editor column to show the panel
+			  {}
+			);
+		
+			// Set the HTML content for the webview panel
+			panel.webview.html = `
+			  <html>
+			  <body>
+				<!-- Your detailed information content goes here -->
+				<h1>File Information</h1>
+				<p>File name: YourFileName.php</p>
+				<p>Description: This file does XYZ.</p>
+			  </body>
+			  </html>
+			`;
+		  }));
+		
+
 		statusBarItem.show();
-	} else {
-		statusBarItem.hide();
 	}
 }

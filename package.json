@@ -19,6 +19,10 @@
       {
         "command": "magento-2-demystifier.demystify-magento",
         "title": "Demystify Magento"
+      },
+      {
+        "command": "magento-2-demystifier.show-detailed-file-info",
+        "title": "Show Detailed Magento File Info"
       }
     ]
   },
