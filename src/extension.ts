@@ -2,19 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import getFileInformation from './mapper';
 import magentoFileMap from './magentoFileMap';
+import { PathInfo } from './types';
 
-type FileType = {
-	isEditable: boolean;
-	name: string;
-	description: string;
-	paths?: PathInfo[];
-};
-
-type PathInfo = {
-	directory: string; // app, bin, dev, etc.
-	title: string; // Application Code, Command Line Scripts, etc.
-	description: string; // Description of the directory
-};
 
 const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 myStatusBarItem.command = 'extension.show-detailed-file-info';
@@ -37,7 +26,7 @@ function updateStatusBarItem(statusBarItem: vscode.StatusBarItem, context: any):
 	if (editor) {
 		const filePath = editor.document.uri.fsPath;
 
-		const fileInfo = getFileInformation(filePath, magentoFileMap);
+		const filePathSteps = getFileInformation(filePath, magentoFileMap);
 
 		// const fileType = detectFileType(filePath); // Implement this function based on your logic
 
@@ -50,32 +39,38 @@ function updateStatusBarItem(statusBarItem: vscode.StatusBarItem, context: any):
 
 
 
-		if (fileInfo.pathSteps.length > 0) {
-			statusBarItem.text = `${fileInfo.pathSteps[fileInfo.pathSteps.length - 1].title}`;
+		if (filePathSteps.length > 0) {
+			statusBarItem.text = `${filePathSteps[filePathSteps.length - 1].title}`;
 		}
-		context.subscriptions.push(vscode.commands.registerCommand('extension.show-detailed-file-info', () => {
-			// Create or show the webview panel
-			const panel = vscode.window.createWebviewPanel(
-			  'moreInformation', // Identifies the panel
-			  'More Information', // Title displayed in the UI
-			  vscode.ViewColumn.One, // Editor column to show the panel
-			  {}
-			);
-		
-			// Set the HTML content for the webview panel
-			panel.webview.html = `
-			  <html>
-			  <body>
-				<!-- Your detailed information content goes here -->
-				<h1>File Information</h1>
-				<p>File name: YourFileName.php</p>
-				<p>Description: This file does XYZ.</p>
-			  </body>
-			  </html>
-			`;
-		  }));
+
+		registerMoreInfoWindow(context, filePathSteps);
 		
 
 		statusBarItem.show();
 	}
+}
+
+function registerMoreInfoWindow(context: any, filePathSteps: PathInfo[]) {
+	context.subscriptions.push(vscode.commands.registerCommand('extension.show-detailed-file-info', () => {
+		// Create or show the webview panel
+		const panel = vscode.window.createWebviewPanel(
+		  'moreInformation', // Identifies the panel
+		  'More Information', // Title displayed in the UI
+		  vscode.ViewColumn.One, // Editor column to show the panel
+		  {}
+		);
+	
+		// Set the HTML content for the webview panel
+		panel.webview.html = `
+		  <html>
+		  <body>
+			<!-- Your detailed information content goes here -->
+			<h1>File Information</h1>
+			<p>File name: YourFileName.php</p>
+			<p>Description: This file does XYZ.</p>
+		  </body>
+		  </html>
+		`;
+	  }));
+
 }

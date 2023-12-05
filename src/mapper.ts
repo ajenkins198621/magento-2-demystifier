@@ -1,19 +1,19 @@
-function getFileInformation(path: any, magentoFileMap: any) {
-  // Split the path into individual steps
-  const pathSteps = path.split('/');
+import { FileInformation, FileMap, FileMapItem, PathInfo } from "./types";
 
-  // Initialize a variable to store the current directory
-  let currentDirectory = magentoFileMap;
+function getFileInformation(path: string, magentoFileMap: FileMap): PathInfo[] {
 
-  // Initialize an array to store the path information
-  const pathInfo = [];
+  const pathSteps : string[] = path.split('/');
 
-  // Iterate through the path steps
+  let currentDirectory : FileMap = magentoFileMap;
+
+  const pathInfo : PathInfo[] = [];
+
+
   for (let i = 0; i < pathSteps.length; i++) {
 
-    const step = pathSteps[i];
-    const isBeforeFile = i === pathSteps.length - 2;
-    const isFile = step.includes(".");
+    const step : string = pathSteps[i];
+    const isBeforeFile : boolean = i === pathSteps.length - 2;
+    const isFile : boolean = step.includes(".");
 
     if (!isFile) {
       if (typeof currentDirectory[step] !== "undefined") {
@@ -26,7 +26,7 @@ function getFileInformation(path: any, magentoFileMap: any) {
 
         // Update the current directory to the next level
 				const keyToLookIntoNext = isBeforeFile ? 'files' : 'subDirectories';
-        currentDirectory = currentDirectory[step][keyToLookIntoNext];
+        currentDirectory = currentDirectory[step][keyToLookIntoNext] as FileMap;
       } else if (typeof currentDirectory['*'] !== "undefined") {
 
         const titleToUse = currentDirectory['*'].title.replace("*", step);
@@ -38,7 +38,7 @@ function getFileInformation(path: any, magentoFileMap: any) {
         });
 
 				const keyToLookIntoNext = isBeforeFile ? 'files' : 'subDirectories';
-        currentDirectory = currentDirectory['*'][keyToLookIntoNext];
+        currentDirectory = currentDirectory['*'][keyToLookIntoNext] as FileMap;
 
       } else {
         pathInfo.push({
@@ -74,12 +74,7 @@ function getFileInformation(path: any, magentoFileMap: any) {
     }
   }
 
-
-  // Return the file information and path steps
-  return {
-    fileInfo: currentDirectory,
-    pathSteps: pathInfo,
-  };
+  return pathInfo;
 }
 
 // Example usage:

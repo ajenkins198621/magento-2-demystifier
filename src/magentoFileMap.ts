@@ -1,4 +1,6 @@
-export default {
+import { FileMap } from "./types";
+
+const magentoFileMapDictionary : FileMap = {
     'app': {
         isEditable: true,
         title: "Application Code",
@@ -71,7 +73,7 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -82,7 +84,7 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -93,7 +95,7 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -104,7 +106,7 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -115,19 +117,18 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
     'pub': {
         isEditable: false,
-        isDirectory: true,
         title: "Pub",
         description: "Contains Magento's publicly accessible files. Editing is not common here.",
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -138,7 +139,7 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -149,7 +150,7 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -160,7 +161,7 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
@@ -171,8 +172,10 @@ export default {
         files: {
 
         },
-        subdirectories: {
+        subDirectories: {
 
         },
     },
 };
+
+export default magentoFileMapDictionary;
