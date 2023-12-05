@@ -52,22 +52,47 @@ function updateStatusBarItem(statusBarItem: vscode.StatusBarItem, context: any):
 
 function registerMoreInfoWindow(context: any, filePathSteps: PathInfo[]) {
 	context.subscriptions.push(vscode.commands.registerCommand('extension.show-detailed-file-info', () => {
+		
+		
 		// Create or show the webview panel
 		const panel = vscode.window.createWebviewPanel(
 		  'moreInformation', // Identifies the panel
-		  'More Information', // Title displayed in the UI
-		  vscode.ViewColumn.One, // Editor column to show the panel
+		  'Magento File Information', // Title displayed in the UI
+		  vscode.ViewColumn.Two, // Editor column to show the panel
 		  {}
 		);
+
+		let pathHtml = '';
+
+		let fileInfo : PathInfo = {
+			step: '',
+			title: '',
+			description: '',
+		};
+
+		filePathSteps.forEach((step, idx) => {
+			pathHtml += `<li>
+				<strong>/${step.step}</strong> - ${step.title}
+				<ul>
+					<li>${step.description}</li>
+				</ul>
+			</li>`;
+			if(idx === filePathSteps.length - 1) {
+				fileInfo = step;
+			}
+		});
 	
 		// Set the HTML content for the webview panel
 		panel.webview.html = `
 		  <html>
 		  <body>
 			<!-- Your detailed information content goes here -->
-			<h1>File Information</h1>
-			<p>File name: YourFileName.php</p>
-			<p>Description: This file does XYZ.</p>
+			<h1>Magento File Information</h1>
+			<p>File name: ${fileInfo.title}</p>
+			<p>Path Info: ${fileInfo.description}</p>
+			<ul>
+				${pathHtml}
+			</ul>
 		  </body>
 		  </html>
 		`;
