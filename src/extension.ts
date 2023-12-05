@@ -1,15 +1,13 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 import getFileInformation from './mapper';
 import magentoFileMap from './magentoFileMap';
 import { PathInfo } from './types';
 
-
-const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-myStatusBarItem.command = 'extension.show-detailed-file-info';
+let myStatusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
-
+	myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	myStatusBarItem.command = 'extension.show-detailed-file-info';
 	context.subscriptions.push(myStatusBarItem);
 
 	// Update status bar item based on active text editor
@@ -28,43 +26,21 @@ function updateStatusBarItem(statusBarItem: vscode.StatusBarItem, context: any):
 
 		const filePathSteps = getFileInformation(filePath, magentoFileMap);
 
-		// const fileType = detectFileType(filePath); // Implement this function based on your logic
-
-		// const editableIcon = '$(pencil)';
-		// const nonEditableIcon = '$(x)';
-
-		// const icon = fileType.isEditable ? editableIcon : nonEditableIcon;
-
-		// statusBarItem.text = `${icon} Magento Type: ${fileType.name}`;
-
-
-
 		if (filePathSteps.length > 0) {
 			statusBarItem.text = `${filePathSteps[filePathSteps.length - 1].title}`;
 		}
 
-		registerMoreInfoWindow(context, filePathSteps);
-		
+		registerMoreInfoWindow(context, filePathSteps, filePath);
 
 		statusBarItem.show();
 	}
 }
 
-function registerMoreInfoWindow(context: any, filePathSteps: PathInfo[]) {
+function registerMoreInfoWindow(context: vscode.ExtensionContext, filePathSteps: PathInfo[], fullPath: string = ''): void {
 	context.subscriptions.push(vscode.commands.registerCommand('extension.show-detailed-file-info', () => {
-		
-		
-		// Create or show the webview panel
-		const panel = vscode.window.createWebviewPanel(
-		  'moreInformation', // Identifies the panel
-		  'Magento File Information', // Title displayed in the UI
-		  vscode.ViewColumn.Two, // Editor column to show the panel
-		  {}
-		);
-
 		let pathHtml = '';
 
-		let fileInfo : PathInfo = {
+		let fileInfo: PathInfo = {
 			step: '',
 			title: '',
 			description: '',
@@ -72,30 +48,45 @@ function registerMoreInfoWindow(context: any, filePathSteps: PathInfo[]) {
 
 		filePathSteps.forEach((step, idx) => {
 			pathHtml += `<li>
-				<strong>/${step.step}</strong> - ${step.title}
-				<ul>
-					<li>${step.description}</li>
-				</ul>
-			</li>`;
-			if(idx === filePathSteps.length - 1) {
+        <strong>/${step.step}</strong> - ${step.title}
+        <ul>
+          <li>${step.description}</li>
+        </ul>
+      </li>`;
+			if (idx === filePathSteps.length - 1) {
 				fileInfo = step;
 			}
 		});
-	
-		// Set the HTML content for the webview panel
-		panel.webview.html = `
-		  <html>
-		  <body>
-			<!-- Your detailed information content goes here -->
-			<h1>Magento File Information</h1>
-			<p>File name: ${fileInfo.title}</p>
-			<p>Path Info: ${fileInfo.description}</p>
-			<ul>
-				${pathHtml}
-			</ul>
-		  </body>
-		  </html>
-		`;
-	  }));
 
+		// Set the HTML content for the webview panel
+		const html = `
+      <html>
+      <body>
+        <!-- Your detailed information content goes here -->
+        <h1>Magento File Information</h1>
+        <p>File name: ${fileInfo.title}</p>
+        <p>Path Info: ${fileInfo.description}</p>
+        <p>Full Path: ${fullPath}</p>
+        <ul>
+          ${pathHtml}
+        </ul>
+      </body>
+      </html>
+    `;
+
+		// Create and show the webview panel
+		const panel = vscode.window.createWebviewPanel(
+			`moreInformation_${fullPath}`, // Identifies the panel
+			`Magento File Information`, // Title displayed in the UI
+			vscode.ViewColumn.Two, // Editor column to show the panel
+			{}
+		);
+		panel.webview.html = html;
+	}));
+}
+
+export function deactivate() {
+	if (myStatusBarItem) {
+		myStatusBarItem.dispose();
+	}
 }
