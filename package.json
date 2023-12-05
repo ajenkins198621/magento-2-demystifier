@@ -2,7 +2,7 @@
   "name": "magento-2-demystifier",
   "displayName": "Magento 2 Demystifier",
   "description": "Identifies magento files and describes them",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.84.0"
   },

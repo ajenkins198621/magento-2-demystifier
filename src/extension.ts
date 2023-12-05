@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import getFileInformation from './mapper';
+import magentoFileMap from './magentoFileMap';
 
 type FileType = {
 	isEditable: boolean;
@@ -31,14 +33,22 @@ function updateStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
 	const editor = vscode.window.activeTextEditor;
 	if (editor) {
 		const filePath = editor.document.uri.fsPath;
-		const fileType = detectFileType(filePath); // Implement this function based on your logic
 
-		const editableIcon = '$(pencil)';
-		const nonEditableIcon = '$(x)';
+		const fileInfo = getFileInformation(filePath, magentoFileMap);
 
-		const icon = fileType.isEditable ? editableIcon : nonEditableIcon;
+		// const fileType = detectFileType(filePath); // Implement this function based on your logic
 
-		statusBarItem.text = `${icon} Magento Type: ${fileType.name}`;
+		// const editableIcon = '$(pencil)';
+		// const nonEditableIcon = '$(x)';
+
+		// const icon = fileType.isEditable ? editableIcon : nonEditableIcon;
+
+		// statusBarItem.text = `${icon} Magento Type: ${fileType.name}`;
+
+
+		if(fileInfo.pathSteps.length > 0) {
+			statusBarItem.text = `${fileInfo.pathSteps[fileInfo.pathSteps.length - 1].title}`;
+		}
 		statusBarItem.show();
 	} else {
 		statusBarItem.hide();
